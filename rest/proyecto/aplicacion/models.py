@@ -1,6 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
+class registrar_usuario(models.Model):
+    id_usuario = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50)
+    direccion = models.CharField(max_length=50)
+    telefono = models.BigIntegerField()
+    email = models.CharField(max_length=50)
+
+
 class registrar_granja(models.Model):
     id_granja = models.AutoField(primary_key=True)
     nombre_granja = models.CharField(max_length=50)
@@ -13,7 +22,7 @@ class registrar_galpon(models.Model):
     id_galpon = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
     ubicacion = models.CharField(max_length=50)
-    capacidad = models.CharField(max_length=50)
+    capacidad = models.IntegerField(max_length=50)
     id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class registrar_encargado(models.Model):

@@ -10,17 +10,17 @@ from .models import (
     registrar_granja,
     registrar_galpon,
     registrar_encargado,
+    registrar_usuario,
     configurar_parametros,
     mediciones,
-    Alerta
 )
 from .serializers import (
     RegistrarGranjaSerializer,
     RegistrarGalponSerializer,
     RegistrarEncargadoSerializer,
+     RegistrarUsuarioSerializer,
     ConfigurarParametrosSerializer,
     MedicionesSerializer,
-    AlertaSerializer,
     UserSerializer
 )
 
@@ -65,98 +65,34 @@ class ObtainAuthTokenView(generics.GenericAPIView):
         return Response({'detail': 'Credenciales inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-# views.py
-
-
-class UserRoleView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        if user.groups.filter(name='Admin').exists():
-            role = 'admin'
-        else:
-            role = 'user'
-        
-        return Response({'role': role})
-
-# Vistas del Administrador
-
 class RegistrarGranjaViewSet(viewsets.ModelViewSet):
     queryset = registrar_granja.objects.all()
     serializer_class = RegistrarGranjaSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
 class RegistrarGalponViewSet(viewsets.ModelViewSet):
     queryset = registrar_galpon.objects.all()
     serializer_class = RegistrarGalponSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
 class ConfigurarParametrosViewSet(viewsets.ModelViewSet):
     queryset = configurar_parametros.objects.all()
     serializer_class = ConfigurarParametrosSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
 class MedicionesViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = mediciones.objects.all()
     serializer_class = MedicionesSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
 class RegistrarEncargadoViewSet(viewsets.ModelViewSet):
     queryset = registrar_encargado.objects.all()
     serializer_class = RegistrarEncargadoSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
-class GenerateReportView(generics.GenericAPIView):
-    permission_classes = [permissions.IsAdminUser]
+class RegistrarUsuarioViewSet(viewsets.ModelViewSet):
+    queryset = registrar_usuario.objects.all()
+    serializer_class = RegistrarUsuarioSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="mediciones_report.csv"'
 
-        writer = csv.writer(response)
-        writer.writerow(['ID', 'Temperatura', 'Humedad', 'Fecha', 'Hora', 'Promedio Temperatura'])
-
-        queryset = mediciones.objects.all()
-        for medicion in queryset:
-            writer.writerow([
-                medicion.id_medicion,
-                medicion.temperatura,
-                medicion.humedad,
-                medicion.fecha,
-                medicion.hora,
-                medicion.promedio_temperatura
-            ])
-
-        return response
-
-# Vistas del Usuario
-
-class VerGranjaViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = RegistrarGranjaSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        return registrar_granja.objects.filter(id_usuario=user)
-
-class VerGalponViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = RegistrarGalponSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        return registrar_galpon.objects.filter(id_usuario=user)
-
-class VerMedicionesActualesViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = MedicionesSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        galpones = registrar_galpon.objects.filter(id_usuario=user)
-        return mediciones.objects.filter(id_config_parametro__in=galpones)
-
-class AlertaViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = AlertaSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        return Alerta.objects.filter(id_encargado__id=user.id)
