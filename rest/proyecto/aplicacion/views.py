@@ -1,11 +1,8 @@
-import csv
-from django.http import HttpResponse
-from rest_framework import generics, viewsets, permissions, status
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import authenticate
 from .models import (
     registrar_granja,
     registrar_galpon,
@@ -65,32 +62,44 @@ class ObtainAuthTokenView(generics.GenericAPIView):
         return Response({'detail': 'Credenciales inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class RegistrarGranjaViewSet(viewsets.ModelViewSet):
+class RegistrarGranjaView(generics.ListCreateAPIView):
     queryset = registrar_granja.objects.all()
     serializer_class = RegistrarGranjaSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-class RegistrarGalponViewSet(viewsets.ModelViewSet):
+    def perform_create(self, serializer):
+        if self.request.user.is_staff:
+            serializer.save()
+        else:
+            raise permissions.PermissionDenied("Solo los administradores pueden crear productos")
+
+class RegistrarGalponView(generics.ListCreateAPIView):
     queryset = registrar_galpon.objects.all()
     serializer_class = RegistrarGalponSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-class ConfigurarParametrosViewSet(viewsets.ModelViewSet):
+    def perform_create(self, serializer):
+        if self.request.user.is_staff:
+            serializer.save()
+        else:
+            raise permissions.PermissionDenied("Solo los administradores pueden crear productos")
+
+class ConfigurarParametrosView(generics.ListCreateAPIView):
     queryset = configurar_parametros.objects.all()
     serializer_class = ConfigurarParametrosSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-class MedicionesViewSet(viewsets.ReadOnlyModelViewSet):
+class MedicionesView(generics.ListCreateAPIView):
     queryset = mediciones.objects.all()
     serializer_class = MedicionesSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-class RegistrarEncargadoViewSet(viewsets.ModelViewSet):
+class RegistrarEncargadoView(generics.ListCreateAPIView):
     queryset = registrar_encargado.objects.all()
     serializer_class = RegistrarEncargadoSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-class RegistrarUsuarioViewSet(viewsets.ModelViewSet):
+class RegistrarUsuarioViewSet(generics.ListCreateAPIView):
     queryset = registrar_usuario.objects.all()
     serializer_class = RegistrarUsuarioSerializer
     permission_classes = [permissions.IsAuthenticated]

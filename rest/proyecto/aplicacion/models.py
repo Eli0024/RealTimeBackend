@@ -22,7 +22,7 @@ class registrar_galpon(models.Model):
     id_galpon = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
     ubicacion = models.CharField(max_length=50)
-    capacidad = models.IntegerField(max_length=50)
+    capacidad = models.IntegerField()
     id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class registrar_encargado(models.Model):
