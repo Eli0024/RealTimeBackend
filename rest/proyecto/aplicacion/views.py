@@ -76,13 +76,9 @@ class RegistrarGranjaView(generics.ListCreateAPIView):
 class RegistrarGalponView(generics.ListCreateAPIView):
     queryset = registrar_galpon.objects.all()
     serializer_class = RegistrarGalponSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
-    def perform_create(self, serializer):
-        if self.request.user.is_staff:
-            serializer.save()
-        else:
-            raise permissions.PermissionDenied("Solo los administradores pueden crear productos")
+   
 
 class ConfigurarParametrosView(generics.ListCreateAPIView):
     queryset = configurar_parametros.objects.all()
