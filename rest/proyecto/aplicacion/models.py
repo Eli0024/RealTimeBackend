@@ -8,6 +8,7 @@ class registrar_usuario(models.Model):
     direccion = models.CharField(max_length=50)
     telefono = models.BigIntegerField()
     email = models.CharField(max_length=50)
+    is_staff = models.BooleanField
 
 
 class registrar_granja(models.Model):

@@ -24,7 +24,7 @@ from .serializers import (
 
 # Vistas de Autenticación y Registro
 
-class UserRegisterView(generics.CreateAPIView):
+class UserRegisterView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
