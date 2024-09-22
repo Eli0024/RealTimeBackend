@@ -47,11 +47,8 @@ class mediciones(models.Model):
     id_medicion = models.AutoField(primary_key=True)
     temperatura = models.CharField(max_length=50)
     humedad = models.CharField(max_length=50)
-    fecha = models.DateField()
-    hora = models.TimeField()
-    promedio_temperatura = models.IntegerField(default=25)
-    id_config_parametro = models.ForeignKey(configurar_parametros, on_delete=models.CASCADE)
-
+    fecha = models.DateField(auto_now_add=True)
+    hora = models.TimeField(auto_now_add=True)
 class Alerta(models.Model):
     mensaje = models.TextField()
     fecha = models.DateTimeField(auto_now_add=True)

@@ -1,4 +1,5 @@
 from django.urls import path
+from . import views
 from .views import (ConfigurarParametrosDetailView, MedicionesDetailView, RegistrarEncargadoDetailView, RegistrarGalponDetailView, RegistrarGranjaDetailView, UserRegisterView,ObtainAuthTokenView,RegistrarGranjaView,RegistrarGalponView,ConfigurarParametrosView,
     MedicionesView,RegistrarEncargadoView)
 
@@ -16,5 +17,6 @@ urlpatterns = [
     path('mediciones/<int:pk>/', MedicionesDetailView.as_view(), name='granja_list'),
     path('encargados/', RegistrarEncargadoView.as_view(), name='encargado_list'),
     path('encargados/<int:pk>/', RegistrarEncargadoDetailView.as_view(), name='granja_list'),
+    path('mediciones/',views.registrarMediciones, name='mediciones')
 ]
 
