@@ -22,8 +22,8 @@ from .views import (
 
 
 urlpatterns = [
-    path('register/', UserRegisterView.as_view(), name='register'),
-    path('login/', ObtainAuthTokenView.as_view(), name='login'),
+    path('register/', UserRegisterView, name='register'),
+    path('login/', ObtainAuthTokenView, name='login'),
     path('galpones/', RegistrarGalponView.as_view(), name='galpon_list'),
     path('galpones/<int:pk>/', RegistrarGalponDetailView.as_view(), name='galpon_detail'),
     path('granjas/', RegistrarGranjaView.as_view(), name='granja_list'),

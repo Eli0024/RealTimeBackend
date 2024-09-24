@@ -16,26 +16,34 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'is_staff']
-        extra_kwargs = {
-            'password': {'write_only': True},
-            'email': {'required': True}  # Asegúrate de que el campo email sea requerido
-        }
+        # extra_kwargs = {
+        #     'email': {'required': True}  # Asegúrate de que el campo email sea requerido
+        # }
 
+    # def create(self, validated_data):
+    #     # Asegúrate de incluir first_name y last_name si están en validated_data
+    #     user = User.objects.create_user(
+    #         username=validated_data['username'],
+    #         email=validated_data['email'],
+    #         password=validated_data['password'],
+    #         first_name=validated_data.get('first_name', ''),
+    #         last_name=validated_data.get('last_name', '')
+    #     )
+        
+    #     if 'is_staff' in validated_data:
+    #         user.is_staff = validated_data['is_staff']
+    #         user.save()
+        
+    #     return user
     def create(self, validated_data):
-        # Asegúrate de incluir first_name y last_name si están en validated_data
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password'],
-            first_name=validated_data.get('first_name', ''),
-            last_name=validated_data.get('last_name', '')
-        )
-        
-        if 'is_staff' in validated_data:
-            user.is_staff = validated_data['is_staff']
-            user.save()
-        
-        return user
+            user = User.objects.create_user(
+                username=validated_data['username'],
+                password=validated_data['password']
+            )
+            if 'is_staff' in validated_data:
+                user.is_staff = validated_data['is_staff']
+                user.save()
+            return user
 
 
 class RegistrarGranjaSerializer(serializers.ModelSerializer):
