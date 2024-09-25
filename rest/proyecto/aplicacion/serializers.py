@@ -10,15 +10,25 @@ from .models import (
 )
 from django.contrib.auth.models import User
 
-class UserSerializer(serializers.ModelSerializer):
-    is_staff = serializers.BooleanField(required=False)
-    
+class userSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'is_staff']
-        # extra_kwargs = {
-        #     'email': {'required': True}  # Asegúrate de que el campo email sea requerido
-        # }
+        fields = ('id','username','email','password')
+
+        
+
+        # def create(self, validated_data):
+        #     user = User.objects.create_user(
+        #         first_name=validated_data['first_name'],
+        #         username=validated_data['username'],
+        #         password=validated_data['password'],
+                
+        #     )
+        #     if 'is_staff' in validated_data:
+        #         user.is_staff = validated_data['is_staff']
+        #         user.save()
+        #     return user     
+
 
     # def create(self, validated_data):
     #     # Asegúrate de incluir first_name y last_name si están en validated_data
