@@ -49,6 +49,39 @@ def registrarMediciones(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
+@permission_classes([AllowAny])
+def lista_user(request):
+    custom = User.objects.all()
+    serializer = userSerializer(custom, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+# @permission_classes([IsAdminUser])
+def eliminar_usuarios(request,pk):
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    user.delete()
+    return Response({'message': 'Usuario eliminado'}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['PUT', 'PATCH'])
+@authentication_classes([TokenAuthentication])
+# @permission_classes([IsAdminUser])
+def actualizar_Usuario(request, pk):
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = userSerializer(user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def profile (request):
@@ -60,11 +93,11 @@ class RegistrarGranjaView(generics.ListCreateAPIView):
     serializer_class = RegistrarGranjaSerializer
     permission_classes = [permissions.AllowAny]
 
-    # def perform_create(self, serializer):
-    #     if self.request.user.is_staff:
-    #         serializer.save()
-    #     else:
-    #         raise permissions.PermissionDenied("Solo los administradores pueden crear productos")
+    def perform_create(self, serializer):
+        if self.request.user.is_staff:
+            serializer.save()
+        else:
+            raise permissions.PermissionDenied("Solo los administradores pueden crear productos")
 
 class RegistrarGranjaDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = registrar_granja.objects.all()
@@ -87,11 +120,11 @@ class RegistrarGalponDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RegistrarGalponSerializer
     permission_classes = [permissions.AllowAny]
 
-    # def get_permissions(self):
-    #     if self.request.method in ['PUT', 'PATCH', 'DELETE']:
-    #         if not self.request.user.is_staff:
-    #             raise permissions.PermissionDenied("Solo los administradores pueden modificar galpones")
-    #     return super().get_permissions()
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            if not self.request.user.is_staff:
+                raise permissions.PermissionDenied("Solo los administradores pueden modificar galpones")
+        return super().get_permissions()
 
 class ConfigurarParametrosView(generics.ListCreateAPIView):
     queryset = configurar_parametros.objects.all()
@@ -103,11 +136,11 @@ class ConfigurarParametrosDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ConfigurarParametrosSerializer
     permission_classes = [permissions.AllowAny]
 
-    # def get_permissions(self):
-    #     if self.request.method in ['PUT', 'PATCH', 'DELETE']:
-    #         if not self.request.user.is_staff:
-    #             raise permissions.PermissionDenied("Solo los administradores pueden modificar galpones")
-    #     return super().get_permissions()
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            if not self.request.user.is_staff:
+                raise permissions.PermissionDenied("Solo los administradores pueden modificar galpones")
+        return super().get_permissions()
     
 class MedicionesView(generics.ListCreateAPIView):
     queryset = mediciones.objects.all()
@@ -119,11 +152,11 @@ class MedicionesDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MedicionesSerializer
     permission_classes = [permissions.AllowAny]
 
-    # def get_permissions(self):
-    #     if self.request.method in ['PUT', 'PATCH', 'DELETE']:
-    #         if not self.request.user.is_staff:
-    #             raise permissions.PermissionDenied("Solo los administradores pueden modificar galpones")
-    #     return super().get_permissions()    
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            if not self.request.user.is_staff:
+                raise permissions.PermissionDenied("Solo los administradores pueden modificar galpones")
+        return super().get_permissions()    
 
 class RegistrarEncargadoView(generics.ListCreateAPIView):
     queryset = registrar_encargado.objects.all()
@@ -135,11 +168,11 @@ class RegistrarEncargadoDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RegistrarEncargadoSerializer
     permission_classes = [permissions.AllowAny]
 
-    # def get_permissions(self):
-    #     if self.request.method in ['PUT', 'PATCH', 'DELETE']:
-    #         if not self.request.user.is_staff:
-    #             raise permissions.PermissionDenied("Solo los administradores pueden modificar galpones")
-    #     return super().get_permissions()    
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            if not self.request.user.is_staff:
+                raise permissions.PermissionDenied("Solo los administradores pueden modificar galpones")
+        return super().get_permissions()    
 
 class RegistrarUsuarioViewSet(generics.ListCreateAPIView):
     queryset = registrar_usuario.objects.all()
@@ -151,8 +184,8 @@ class RegistrarUsuarioDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RegistrarUsuarioSerializer
     permission_classes = [permissions.AllowAny]
 
-    # def get_permissions(self):
-    #     if self.request.method in ['PUT', 'PATCH', 'DELETE']:
-    #         if not self.request.user.is_staff:
-    #             raise permissions.PermissionDenied("Solo los administradores pueden modificar galpones")
-    #     return super().get_permissions()    
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            if not self.request.user.is_staff:
+                raise permissions.PermissionDenied("Solo los administradores pueden modificar galpones")
+        return super().get_permissions()    
