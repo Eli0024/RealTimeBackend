@@ -1,6 +1,6 @@
-from django.contrib.auth.models import User
 from . models import Alerta,registrar_encargado,registrar_granja,registrar_usuario,registrar_galpon,mediciones, configurar_parametros
 from rest_framework import serializers
+from django.contrib.auth.models import User
 class userSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
