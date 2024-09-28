@@ -2,9 +2,8 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes,authentication_classes
 from rest_framework.response import Response
 from .serializer import userSerializer,RegistrarEncargadoSerializer,RegistrarGalponSerializer,RegistrarGranjaSerializer,RegistrarUsuarioSerializer,AlertaSerializer,ConfigurarParametrosSerializer,MedicionesSerializer
-from .models import registrar_usuario,registrar_encargado,registrar_galpon,registrar_granja,Alerta,configurar_parametros,mediciones
+from .models import Custom,registrar_usuario,registrar_encargado,registrar_galpon,registrar_granja,Alerta,configurar_parametros,mediciones
 from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
 from rest_framework import status,generics, permissions
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny
@@ -19,7 +18,7 @@ def register (request):
     serializer = userSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        user  = User.objects.get(username=serializer.data['username'])
+        user  = Custom.objects.get(username=serializer.data['username'])
         user.set_password(serializer.data['password'])
         user.save()
         token = Token.objects.create(user=user)
@@ -28,7 +27,7 @@ def register (request):
 
 @api_view(['POST'])
 def login(request):
-    user = get_object_or_404(User, username=request.data['username'])
+    user = get_object_or_404(Custom, username=request.data['username'])
     if not user.check_password(request.data['password']):
         return Response({'error': 'Invalid password'}, status=status.HTTP_400_BAD_REQUEST)
     token, created = Token.objects.get_or_create(user=user)
@@ -49,7 +48,7 @@ def registrarMediciones(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def lista_user(request):
-    custom = User.objects.all()
+    custom = Custom.objects.all()
     serializer = userSerializer(custom, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -58,8 +57,8 @@ def lista_user(request):
 @permission_classes([IsAdminUser])
 def eliminar_usuarios(request,pk):
     try:
-        user = User.objects.get(pk=pk)
-    except User.DoesNotExist:
+        user = Custom.objects.get(pk=pk)
+    except Custom.DoesNotExist:
         return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
     user.delete()
     return Response({'message': 'Usuario eliminado'}, status=status.HTTP_204_NO_CONTENT)
@@ -69,8 +68,8 @@ def eliminar_usuarios(request,pk):
 @permission_classes([IsAdminUser])
 def actualizar_Usuario(request, pk):
     try:
-        user = User.objects.get(pk=pk)
-    except User.DoesNotExist:
+        user = Custom.objects.get(pk=pk)
+    except Custom.DoesNotExist:
         return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
     serializer = userSerializer(user, data=request.data, partial=True)

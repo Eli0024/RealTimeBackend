@@ -1,9 +1,10 @@
 
 # Create your models here.
 from django.db import models
-from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 
+class Custom(AbstractUser):
+    imagen = models.ImageField(upload_to='images/', null=True, blank=True)
 
 class registrar_usuario(models.Model):
     id_usuario = models.AutoField(primary_key=True)
@@ -20,14 +21,14 @@ class registrar_granja(models.Model):
     direccion = models.CharField(max_length=50)
     telefono = models.BigIntegerField()
     email = models.CharField(max_length=50)
-    id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(Custom, on_delete=models.CASCADE)
 
 class registrar_galpon(models.Model):
     id_galpon = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
     ubicacion = models.CharField(max_length=50)
     capacidad = models.IntegerField()
-    id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(Custom, on_delete=models.CASCADE)
 
 class registrar_encargado(models.Model):
     id_encargado = models.AutoField(primary_key=True)
@@ -45,7 +46,7 @@ class configurar_parametros(models.Model):
     hume_minima = models.IntegerField()
     hume_maxima = models.IntegerField()
     promedio_temperatura = models.IntegerField(default=25)
-    id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(Custom, on_delete=models.CASCADE)
 
 class mediciones(models.Model):
     id_medicion = models.AutoField(primary_key=True)

@@ -16,10 +16,6 @@ SECRET_KEY = 'django-insecure-x*m&55$za(sbwy43i^w)!@a)7n3iz!)to3b60n8xcjjr#8io7p
 DEBUG = True
 
 ALLOWED_HOSTS = []
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
-
 
 # Application definition
 
@@ -133,3 +129,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MEDIA_URL = '/imagenes/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'imagenes/')
+
+AUTH_USER_MODEL = 'apirest.Custom'
+

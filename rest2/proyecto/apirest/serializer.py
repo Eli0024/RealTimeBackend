@@ -1,10 +1,9 @@
-from . models import Alerta,registrar_encargado,registrar_granja,registrar_usuario,registrar_galpon,mediciones, configurar_parametros
+from . models import Custom,Alerta,registrar_encargado,registrar_granja,registrar_usuario,registrar_galpon,mediciones, configurar_parametros
 from rest_framework import serializers
-from django.contrib.auth.models import User
 class userSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id','password','username','first_name','last_name','email','is_staff']
+        model = Custom
+        fields = ['id','imagen','password','username','first_name','last_name','email','is_staff']
         
         extra_kwargs = {
             'is_staff': {'read_only': False}, 
@@ -12,7 +11,7 @@ class userSerializer(serializers.ModelSerializer):
         
 
         def create(self, validated_data):
-            user = User.objects.create_user(
+            user = Custom.objects.create_user(
                 username=validated_data['username'],
                 password=validated_data['password']
             )
